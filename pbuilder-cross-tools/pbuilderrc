@@ -1,0 +1,12 @@
+PBUILDERSATISFYDEPENDSCMD="/usr/lib/pbuilder/pbuilder-satisfydepends-apt"
+
+HOOKDIR="/home/joe/work/rasp-pbuilder-env/hooks"
+
+BUILDRESULT="/var/cache/pbuilder/result/"
+
+OTHERMIRROR="deb [trusted=yes] file:/home/joe/work/debian_repo joe main"
+BINDMOUNTS="/home/joe/work"
+
+DISTRIBUTION="buster"
+MIRRORSITE="http://ftp.de.debian.org/debian"
+COMPONENTS="main non-free contrib"
