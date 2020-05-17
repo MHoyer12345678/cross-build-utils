@@ -9,15 +9,15 @@ if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     exit 0
 fi
 
-if [ "${SCRIPT_CONF_FILE}" == "" ]; then
-    SCRIPT_CONF_FILE="./pbuilder-cross-tools.conf"
-    echo "Variable SCRIPT_CONF_FILE not set. Expecting to find: ${SCRIPT_CONF_FILE}"
+if [ "${PBD_SCRIPTS_CONF_FILE}" == "" ]; then
+    PBD_SCRIPTS_CONF_FILE="./pbuilder-cross-tools.conf"
+    echo "Variable PBD_SCRIPTS_CONF_FILE not set. Expecting to find: ${PBD_SCRIPTS_CONF_FILE}"
 fi
 
-echo "Using script configuration file: ${SCRIPT_CONF_FILE}"
+echo "Using script configuration file: ${PBD_SCRIPTS_CONF_FILE}"
 echo
 
-source ${SCRIPT_CONF_FILE} || exit 1
+source ${PBD_SCRIPTS_CONF_FILE} || exit 1
 
 echo "Configuration:"
 echo "--------------"

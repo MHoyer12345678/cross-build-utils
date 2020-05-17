@@ -1,12 +1,19 @@
+# needed to automatically resolve dependencies when building own debian packages
 PBUILDERSATISFYDEPENDSCMD="/usr/lib/pbuilder/pbuilder-satisfydepends-apt"
 
-HOOKDIR="/home/joe/work/rasp-pbuilder-env/hooks"
-
+# build results are put there
 BUILDRESULT="/var/cache/pbuilder/result/"
 
-OTHERMIRROR="deb [trusted=yes] file:/home/joe/work/debian_repo joe main"
+# add local repository so that own packages can be found
+OTHERMIRROR="deb [trusted=yes] file:/var/cache/local-debian-repo joe main"
+
+# make own work space available in the pbuilder environment. Useful when own software
+# is manually compiled after login into the pbuilder environment
 BINDMOUNTS="/home/joe/work"
 
+# distribution used to create the pbuilder environment. The dirstribution needs to
+# support cross building your targeted architecture. (raspian does not, ubuntu is available only
+# for limited architectures, debian is available for a wide range of architectures)
 DISTRIBUTION="buster"
 MIRRORSITE="http://ftp.de.debian.org/debian"
 COMPONENTS="main non-free contrib"
