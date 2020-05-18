@@ -1,12 +1,28 @@
 #!/bin/bash
 
-if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
-    echo "pbd_02_pbuilder_login.sh [--help] [--save]"
-    echo "    --help,-h: Shows this help screen"
-    echo "    --save: saves changes after exiting pbuilder environment"
-    echo
-    exit 0
-fi
+AS_ROOT=0
+
+while getopts hsr opt
+do
+    echo  "Opt: $opt"
+    case $opt in
+	h)
+	    echo "pbd_02_pbuilder_login.sh [-h] [-s] [-r]"
+	    echo "    -h: Shows this help screen"
+	    echo "    -s: saves changes after exiting pbuilder environment"
+	    echo "    -r: login as root. If not passed, login is done as configured user"
+	    echo
+	    exit 0
+            ;;
+	s)
+	    CMD_OPTIONS="--save-after-login"
+            ;;
+	r)
+	    echo "running as root ..."
+	    AS_ROOT=1
+	    ;;
+    esac
+done
 
 if [ "${PBD_SCRIPTS_CONF_FILE}" == "" ]; then
     PBD_SCRIPTS_CONF_FILE="./pbuilder-cross-tools.conf"
@@ -21,11 +37,16 @@ source ${PBD_SCRIPTS_CONF_FILE} || exit 1
 echo "Configuration:"
 echo "--------------"
 echo "pbuilder configuration file: ${PBUILDER_CONFIG_FILE}"
+echo "login user id: ${PBD_LOGIN_USER}"
 echo
-echo "Loging in into  pbuilder environment ..."
 
-if [ "$1" == "--save" ]; then
-    CMD_OPTIONS="--save-after-login"
+echo "su -w debian_chroot - ${PBD_LOGIN_USER}" > /tmp/login.sh
+chmod a+x /tmp/login.sh
+
+if [ $AS_ROOT -ne 1 ]; then
+    echo "Logging in into  pbuilder environment as root ..."
+    sudo pbuilder execute --configfile ${PBUILDER_CONFIG_FILE} ${CMD_OPTIONS} /tmp/login.sh
+else
+    echo "Logging in into  pbuilder environment as user ${PBD_LOGIN_USER} ..."
+    sudo pbuilder login --configfile ${PBUILDER_CONFIG_FILE} ${CMD_OPTIONS}
 fi
-    
-sudo pbuilder login --configfile ${PBUILDER_CONFIG_FILE} ${CMD_OPTIONS}

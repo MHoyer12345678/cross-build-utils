@@ -9,7 +9,7 @@ OTHERMIRROR="deb [trusted=yes] file:/var/cache/local-debian-repo joe main"
 
 # make own work space available in the pbuilder environment. Useful when own software
 # is manually compiled after login into the pbuilder environment
-BINDMOUNTS="/home/joe/work"
+BINDMOUNTS="/home/joe/work /var/cache/local-debian-repo"
 
 # distribution used to create the pbuilder environment. The dirstribution needs to
 # support cross building your targeted architecture. (raspian does not, ubuntu is available only
