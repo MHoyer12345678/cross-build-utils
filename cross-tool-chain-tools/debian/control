@@ -1,0 +1,15 @@
+Source: raspbian-cross-gcc
+Section: embedded 
+Priority: optional
+Maintainer: Marko Hoyer <joe@unknown>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.0
+Homepage: <insert the upstream URL, if relevant>
+#Vcs-Browser: https://salsa.debian.org/debian/basic-startup-conf
+#Vcs-Git: https://salsa.debian.org/debian/basic-startup-conf.git
+
+Package: raspbian-cross-gcc
+Architecture: amd64
+Depends: ${misc:Depends}
+Description: Raspbian cross gcc
+

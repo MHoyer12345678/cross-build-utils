@@ -1,0 +1,19 @@
+- create debian build cell (pbuilder)
+- unpack a copy of gcc from gcc git (e.g. 10.3.0)
+- install build dependencies into build cell: fakeroot libgmp-dev libmpfr-dev libmpc-dev libsisl-dev gnat zlib1g-dev
+- install binutils for target architecture: apt-get install binutils-arm-linux-gnueabihf
+- create build dir (build dir)
+- create gcc-debian/rfs dir (install dir for make install, later used to create deb package)
+- enter build dir (outside gcc src tree)
+- call configure in build dir using ../xxx/configure ...
+- options for raspbian gcc:
+
+>>>>
+  	  ../src/configure -v --with-pkgversion='Debian 10.3.0' --with-bugurl=file:///usr/share/doc/gcc-10/README.Bugs --enable-languages=c,ada,c++,go,d,fortran,objc,obj-c++ --prefix=/usr --with-gcc-major-version-only --program-suffix=-10 --enable-shared --enable-linker-build-id --libexecdir=/usr/lib --without-included-gettext --enable-threads=posix --libdir=/usr/lib --enable-nls --with-sysroot=/ --enable-clocale=gnu --enable-libstdcxx-debug --enable-libstdcxx-time=yes --with-default-libstdcxx-abi=new --enable-gnu-unique-object --disable-libitm --disable-libquadmath --disable-libquadmath-support --enable-plugin --enable-default-pie --with-system-zlib --enable-libphobos-checking=release --without-target-system-zlib --enable-multiarch --disable-sjlj-exceptions --with-arch=armv6 --with-fpu=vfp --with-float=hard --disable-werror --enable-checking=release --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=arm-linux-gnueabihf --program-prefix=arm-linux-gnueabihf- --includedir=/usr/arm-linux-gnueabihf/include --with-build-config=bootstrap-lto-lean --enable-link-mutex
+
+>>>>
+- build gcc: make all-gcc -j 16
+- make DESTDIR=<absolut-path>/gcc-debian/rfs install-gcc
+- cp debian directory from git to gcc-debian dir
+- enter gcc-debian dir
+- build debian package: dpkg-buildpackage -b -uc -us
