@@ -1,3 +1,5 @@
+################ build gcc ######################################################
+
 - create debian build cell (pbuilder)
 - unpack a copy of gcc from gcc git (e.g. 10.3.0)
 - install build dependencies into build cell: fakeroot libgmp-dev libmpfr-dev libmpc-dev libsisl-dev gnat zlib1g-dev
@@ -14,6 +16,27 @@
 >>>>
 - build gcc: make all-gcc -j 16
 - make DESTDIR=<absolut-path>/gcc-debian/rfs install-gcc
+- cp symlinks from git into <absolute-path>/gcc-debian/rfs
 - cp debian directory from git to gcc-debian dir
 - enter gcc-debian dir
 - build debian package: dpkg-buildpackage -b -uc -us
+
+############## create cross base libraries ######################################
+- download from raspbian repository (armhf version): libgcc-s1 libgomp1 libatomic1 libasan6 libubsan1 libc6-dev libc6 
+- convert to cross variants using dpkg-cross
+  dpkg-cross -M -a armhf -b ../arm/*.deb
+- convert libgcc-10-dev to cross version
+  - Download armf version from raspbian; apt-get download libgcc-10-dev:armhf
+  - unpack libgcc-10-dev: ar xf libgcc-10-dev
+  - unpack control.tar.gz into own directory: tar xf control.tar.gz
+  - modify control file
+    * rename package name to libgcc-10-dev-armhf-cross
+    * change architecture to all
+    * change libraries in Depend to respective -armhf-cross versions
+    * remove breaks and recommend fields
+  - tar control.tar.gz file w modified control file: tar caf ../control.tar.gz .
+  - create cross deb package w new control file
+    ar r ./libgcc-10-dev-armhf-cross_xxx_all.deb debain-binary control.tar.gz data.tar.gz
+
+
+
