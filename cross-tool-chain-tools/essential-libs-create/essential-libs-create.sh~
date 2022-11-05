@@ -1,0 +1,98 @@
+#!/bin/bash
+
+RASP_LIBS_DIR="./raspbian-libs"
+CROSS_LIBS_DIR="./cross-libs"
+
+TMP_DIR_BASE=/tmp/essential-libs-create
+TMP_DIR_RASP="${TMP_DIR_BASE}/rasp"
+TMP_DIR_CROSS_DEB="${TMP_DIR_BASE}/cross-deb"
+TMP_DIR_CROSS_NEW="${TMP_DIR_BASE}/cross-new"
+
+#getting absolute pathes
+CALLED_DIR=$PWD
+RASP_LIBS_DIR="${CALLED_DIR}/${RASP_LIBS_DIR}"
+CROSS_LIBS_DIR="${CALLED_DIR}/${CROSS_LIBS_DIR}"
+
+function destroy_tmp_dirs {
+   rm -rf ${TMP_DIR_BASE}
+}
+
+function create_tmp_dirs {
+    #creating tmp dir
+    echo "Creating tmp dir"
+    #create dir to unpack
+    destroy_tmp_dirs
+    mkdir ${TMP_DIR_BASE}
+}
+
+function prepare_tmp_dir_for_package {
+    #preparing tmp dir 
+    echo "Preparing tmp dir"
+    rm -rf "${TMP_DIR_BASE}/*"
+    mkdir ${TMP_DIR_RASP}
+    mkdir ${TMP_DIR_CROSS_DEB}
+    mkdir ${TMP_DIR_CROSS_NEW}
+}
+
+
+#---------------- libgcc-10-dev-armhf-cross ----------------------------------------------
+#- use content and structure from src lib w/o modification
+#- use control file from debian package
+function create_libgcc-10-dev-cross {
+    PKG_NAME="libgcc-10-dev"
+    PKG_NAME_CROSS="${PKG_NAME}-armhf-cross"
+
+    echo "Creating ${PKG_NAME_CROSS} from ${PKG_NAME} ..."
+
+    prepare_tmp_dir_for_package
+
+    #----------------- no replacement of version to +rpil version since cross version has cross extension anyway. No mean to add +rpil  -------------------------
+    #extracting version from raspberry package
+    #cd "${RASP_LIBS_DIR}"
+    #raspbian_v=$(ls ${PKG_NAME}_* | sed s/libc6_// | sed s/_armhf.deb//)
+    #echo "Version of raspbian package: ${raspbian_v}"
+
+    #download and extract control from debian package
+    echo "Downloading debian package to extract control file"
+    cd  ${TMP_DIR_CROSS_DEB}
+    apt-get download ${PKG_NAME_CROSS} || exit 1
+    ar x *.deb || exit 1
+    tar xf control.tar.xz || exit 1
+    PACK_FN=$(ls *.deb)
+
+    #unpacking rasp version of package
+    echo "Repacking raspbian file"
+    cd ${TMP_DIR_RASP}
+    RASP_FN=$(ls ${RASP_LIBS_DIR}/${PKG_NAME}_*.deb)
+    echo "Unpacking raspbian file: ${RASP_FN}"
+    ar xf ${RASP_FN} || exit 1
+    mkdir control-tmp
+    cd control-tmp
+    tar xf ../control.tar.* || exit 1
+
+    #replaceing control file
+    echo "Replacing control file"
+    cp  ${TMP_DIR_CROSS_DEB}/control . || exit 1
+
+    #repacking into new cross package
+    echo "Repacking package into: ${PACK_FN}"
+    tar -caf ../control.tar.* . || exit 1
+    cd ..
+    ar r ${PACK_FN} debian-binary control.tar.* data.tar.* || exit 1
+
+    #cp into results dir
+    echo "Copying package into results dir"
+    cp ${PACK_FN} ${CROSS_LIBS_DIR}/ || exit 1
+}
+
+
+
+create_tmp_dirs
+create_libgcc-10-dev-cross
+destroy_tmp_dirs
+
+echo "Done"
+
+
+
+
