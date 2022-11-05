@@ -42,4 +42,4 @@ fi
 
 
 echo "Building component ${DSC_FILE} for architecture ${CROSS_BUILD_ARCH} ..." 
-sudo pbuilder build --configfile ${PBUILDER_CONFIG_FILE} --host-arch ${CROSS_BUILD_ARCH} ${DSC_FILE}
+sudo pbuilder build --configfile ${PBUILDER_CONFIG_FILE} --host-arch ${CROSS_BUILD_ARCH} --debbuildopts -d ${DSC_FILE}

@@ -34,4 +34,4 @@ echo "pbuilder result dir: ${BUILDRESULT}"
 echo
 
 echo "Adding packages found in pbuilder results dir to local repository ..."
-ls ${BUILDRESULT}/*.changes | xargs -L 1 reprepro -b ${LOCAL_REPO_DIR} include ${LOCAL_REPO_DIST}
+ls ${BUILDRESULT}/*.changes | xargs -L 1 reprepro --ignore=wrongdistribution -b ${LOCAL_REPO_DIR} include ${LOCAL_REPO_DIST}
