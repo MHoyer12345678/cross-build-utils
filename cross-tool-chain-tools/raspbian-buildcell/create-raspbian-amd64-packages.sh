@@ -25,7 +25,7 @@ do
     $SCRIPT_DIR/convert-pkg-deb-rasp.sh ${pkg}
     case $? in
 	0)
-	    pkg_list_sucess="${pkg_list_success}${pkg} "
+	    pkg_list_success="${pkg_list_success}${pkg} "
 	    ;;
 
 	2)
