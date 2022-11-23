@@ -141,7 +141,6 @@ libio-socket-ssl-perl
 libio-string-perl
 libipc-run-perl
 libisl23
-libitm1
 libk5crypto3
 libkeyutils1
 libkrb5-3
@@ -149,7 +148,6 @@ libkrb5support0
 libksba8
 libldap-2.4-2
 liblocale-gettext-perl
-liblsan0
 liblwp-mediatypes-perl
 liblwp-protocol-https-perl
 liblz4-1
@@ -182,7 +180,6 @@ libpipeline1
 libpython3-stdlib
 libpython3.9-minimal
 libpython3.9-stdlib
-libquadmath0
 libreadline8
 librole-tiny-perl
 libsasl2-2
@@ -211,7 +208,6 @@ libtirpc-dev
 libtirpc3
 libtool
 libtry-tiny-perl
-libtsan0
 libubsan1
 libuchardet0
 libudev1
