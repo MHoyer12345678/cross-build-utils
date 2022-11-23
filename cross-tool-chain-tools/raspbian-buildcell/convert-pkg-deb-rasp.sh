@@ -18,14 +18,9 @@ fi
 pkg_name=$1
 echo "Converting package ${pkg_name}" 
 
-# use dpkg -s here, apt-cache show is confused when different versions are available in raspbian and debian
-deb_pkg_info=$(dpkg -s ${pkg_name}:amd64)
-if [ $? -ne 0 ]; then
-    echo "dpkg -s returned error"
-    exit 1
-fi
-deb_pkg_arch=$(echo "$deb_pkg_info" | grep "Architecture:" | sed "s/Architecture: //")
-deb_pkg_version=$(echo "$deb_pkg_info" | grep "Version:" | sed "s/Version: //")
+deb_pkg_info=$(apt-cache show ${pkg_name}:amd64)
+deb_pkg_arch=$(echo "$deb_pkg_info" | grep -m 1 "Architecture:" | sed "s/Architecture: //")
+deb_pkg_version=$(echo "$deb_pkg_info" | grep -m 1 "Version:" | sed "s/Version: //")
 
 echo "Debian Arch: ${deb_pkg_arch}"
 echo "Debian Version: ${deb_pkg_version}"
