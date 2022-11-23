@@ -31,6 +31,9 @@ if [ "${deb_pkg_arch}" != "amd64" ]; then
 fi
 
 rasp_pkg_info=$(apt-cache show ${pkg_name}:armhf)
+if [ $? -ne 0 ]; then
+    exit 1
+fi
 rasp_pkg_version=$(echo "$rasp_pkg_info" | grep "Version:" | sed "s/Version: //")
 
 echo "Raspbian Version: ${rasp_pkg_version}"

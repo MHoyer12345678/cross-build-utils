@@ -14,6 +14,7 @@ fi
 pkg_list_success=""
 pkg_list_version_conflict=""
 pkg_list_no_amd64=""
+pkg_list_skipped_present=""
 
 pkg_list_fn=$1
 
@@ -22,6 +23,16 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 while IFS= read -r pkg
 do
     echo "Converting pkg: $pkg"
+
+    echo "Checking if package has already bin converted ..."
+    ls ${pkg}* &> /dev/null
+    if [ $? -eq 0 ]; then
+	echo "Package already converted. Skipping it."
+	pkg_list_skipped_present="${pkg_list_skipped_present}${pkg} "
+	continue
+    fi
+    echo "Package not found. Start converting it"
+    
     $SCRIPT_DIR/convert-pkg-deb-rasp.sh ${pkg}
     case $? in
 	0)
@@ -48,6 +59,8 @@ echo "---------------------------- Done -------------------------------------"
 echo "List of successfully ported packages: ${pkg_list_success}"
 echo ""
 echo "Packages not AMD64: ${pkg_list_no_amd64}"
+echo ""
+echo "Packages skipped because already converted before: ${pkg_list_skipped_present}"
 echo ""
 echo "Packages with version conflicts: ${pkg_list_version_conflict}"
 echo ""
