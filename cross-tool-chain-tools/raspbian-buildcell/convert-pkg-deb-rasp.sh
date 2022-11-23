@@ -20,6 +20,10 @@ echo "Converting package ${pkg_name}"
 
 # use dpkg -s here, apt-cache show is confused when different versions are available in raspbian and debian
 deb_pkg_info=$(dpkg -s ${pkg_name}:amd64)
+if [ $? -ne 0 ]; then
+    echo "dpkg -s returned error"
+    exit 1
+fi
 deb_pkg_arch=$(echo "$deb_pkg_info" | grep "Architecture:" | sed "s/Architecture: //")
 deb_pkg_version=$(echo "$deb_pkg_info" | grep "Version:" | sed "s/Version: //")
 
@@ -71,12 +75,13 @@ echo "Done"
 
 echo "Comparing base versions"
 
-rasp_pkg_version_base=${rasp_pkg_version%+*}
+deb_pkg_version_base=${deb_pkg_version%%+*}
+rasp_pkg_version_base=${rasp_pkg_version%%+*}
 
-echo "Debian: ${deb_pkg_version}"
-echo "Raspbian: ${rasp_pkg_version_base}"
+echo "Debian(base): ${deb_pkg_version_base}"
+echo "Raspbian(base): ${rasp_pkg_version_base}"
 
-if [ "${rasp_pkg_version_base}" != "${deb_pkg_version}" ]; then
+if [ "${rasp_pkg_version_base}" != "${deb_pkg_version_base}" ]; then
    echo "Packages have version conflicts."
    exit 3
 else
