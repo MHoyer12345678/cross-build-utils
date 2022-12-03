@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # convert-pkg-deb-rasp.sh <pkg_name>
-# return codes: 0: everything fine, 1: error, 2: package skipped (not AMD64), 3: version conflict detected, package processed anyway
+# return code: 0,4: verything fine, 1: error, 2,6: no AMD64 package -> downloaded directly from raspbian, 3,7: version conflict detected, package processed anyway, 4,6,7: need dep rework in package 
 
 # - check if pkg is amd64 package. If not -> skip
 # - get package  version from raspbian distro (armhf version)
@@ -21,13 +21,33 @@ echo "Converting package ${pkg_name}"
 deb_pkg_info=$(apt-cache show ${pkg_name}:amd64)
 deb_pkg_arch=$(echo "$deb_pkg_info" | grep -m 1 "Architecture:" | sed "s/Architecture: //")
 deb_pkg_version=$(echo "$deb_pkg_info" | grep -m 1 "Version:" | sed "s/Version: //")
+deb_pkg_deps=$(echo "$deb_pkg_info" | grep -m 1 "Depends:" | sed "s/Depends: //")
+
 
 echo "Debian Arch: ${deb_pkg_arch}"
 echo "Debian Version: ${deb_pkg_version}"
+echo "Debian Depends: ${deb_pkg_deps}"
+
+need_rework_ret_code=0
+
+if [ "${deb_pkg_deps}" != "" ]; then
+
+    echo "Checking for dependencies with exact versions required (= <version>)."  
+    # check if there are deps requiring exact version (= <version>)
+    echo "${deb_pkg_deps}" | grep "(\s*=\s*"
+
+    if [ $? -eq 0 ]; then
+	echo "Package contains exact dependencies. Need rework of dependency line."
+	need_rework_ret_code=4
+    else
+	echo "Package does not contain dependencies with exact version required."
+    fi
+fi
 
 if [ "${deb_pkg_arch}" != "amd64" ]; then
-    echo "Package has not AMD64 architecture. Skipping it."
-    exit 2
+    echo "Package has not AMD64 architecture. Downloading the raspberry version."
+    apt-get download ${pkg_name}:all
+    exit $((need_rework_ret_code+2))
 fi
 
 rasp_pkg_info=$(apt-cache show ${pkg_name}:armhf)
@@ -81,9 +101,9 @@ echo "Raspbian(base): ${rasp_pkg_version_base}"
 
 if [ "${rasp_pkg_version_base}" != "${deb_pkg_version_base}" ]; then
    echo "Packages have version conflicts."
-   exit 3
+   exit $((need_rework_ret_code+3))
 else
    echo "Base versions matching"
-   exit 0
+   exit $((need_rework_ret_code+0))
 fi
 
