@@ -1,0 +1,14 @@
+- Create raspbian amd64 cross packages using create-raspbian-amd64-packages.sh
+- Create cross gcc (see manual in cross-tool-chain-tools/build-cross-tc-existing-libc.txt)
+- Create essential libs using  cross-tool-chain-tools/essential-libs-create/essential-libs-create.sh
+- add everything to debian repository /var/cache/raspbian_local/
+  - Mirror: The local repo w/ the packages created, additional mirror: raspbian
+- create initial build cell using: pbuilder create --configfile <path to pbuilderrc>
+- login saving changes using: pbuilder login --configfile <path tp pbuilderrc> --save-after-login
+- add user joe using: adduser joe
+- provide passwd to user root using: passwd
+- install raspbian gcc and crossbuid essentials using: apt-get install	raspbian-cross-gcc crossbuild-essential-armhf
+- move everything from /usr/lib/gcc-cross to /usr/lib/gcc
+- remove /usr/lib/gcc-cross and create symlink /usr/lib/gcc -> /usr/lib/gcc-cross
+- add armhf as architecture using: dpkg --add-architecture armhf && apt-get update
+

@@ -1,0 +1,28 @@
+# needed to automatically resolve dependencies when building own debian packages
+PBUILDERSATISFYDEPENDSCMD="/usr/lib/pbuilder/pbuilder-satisfydepends-apt"
+
+# build results are put there
+BUILDRESULT="/var/cache/pbuilder/result/"
+
+# create own base.tgz for rasppbian build cell
+BASETGZ=/var/cache/pbuilder/raspbian-bc.tgz
+
+# add local repository so that own packages can be found
+OTHERMIRROR="deb [trusted=yes] http://debian.bio.lmu.de/raspbian/raspbian bullseye main non-free contrib"
+
+# make own work space available in the pbuilder environment. Useful when own software
+# is manually compiled after login into the pbuilder environment
+BINDMOUNTS="/home/joe/work /var/cache/raspbian_local"
+
+# distribution used to create the pbuilder environment. The dirstribution needs to
+# support cross building your targeted architecture. (raspian does not, ubuntu is available only
+# for limited architectures, debian is available for a wide range of architectures)
+DISTRIBUTION="bullseye"
+ALLOWUNTRUSTED=yes
+MIRRORSITE="file:/var/cache/raspbian_local"
+COMPONENTS="main non-free contrib"
+DEBOOTSTRAPOPTS=( '--variant=minbase' '--no-check-gpg' )
+
+APTCONFDIR=/home/joe/work/raspbian-buildcell/apt
+
+EXTRAPACKAGES="fakeroot debhelper autotools-dev gawk pkg-config mime-support file cpio python3 python3-minimal automake autoconf libtool"
