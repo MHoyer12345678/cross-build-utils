@@ -21,7 +21,7 @@ echo "Converting package ${pkg_name}"
 deb_pkg_info=$(apt-cache show ${pkg_name}:amd64)
 deb_pkg_arch=$(echo "$deb_pkg_info" | grep -m 1 "Architecture:" | sed "s/Architecture: //")
 deb_pkg_version=$(echo "$deb_pkg_info" | grep -m 1 "Version:" | sed "s/Version: //")
-deb_pkg_deps=$(echo "$deb_pkg_info" | grep -m 1 "Depends:" | sed "s/Depends: //")
+deb_pkg_deps=$(echo "$deb_pkg_info" | grep -m 1 "^Depends:" | sed "s/Depends: //")
 
 
 echo "Debian Arch: ${deb_pkg_arch}"
@@ -52,7 +52,9 @@ fi
 
 rasp_pkg_info=$(apt-cache show ${pkg_name}:armhf)
 if [ $? -ne 0 ]; then
-    exit 1
+    echo "Package has no candidate in raspbian. Just downloading the package w/o converting it."
+    apt-get download ${pkg_name}
+    exit $((need_rework_ret_code+0))
 fi
 rasp_pkg_version=$(echo "$rasp_pkg_info" | grep "Version:" | sed "s/Version: //")
 

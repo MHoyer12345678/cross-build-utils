@@ -38,7 +38,7 @@ mkdir ctrl
 cd ctrl
 tar xf ../control.*
 
-dep_line=$(grep "Depends: " ./control | sed "s/Depends: //")
+dep_line=$(grep "^Depends: " ./control | sed "s/Depends: //")
 echo "Depends line: ${dep_line}"
 
 new_dep_line="Depends: "

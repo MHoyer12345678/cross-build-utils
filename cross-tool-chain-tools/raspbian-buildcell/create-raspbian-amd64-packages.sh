@@ -25,6 +25,8 @@ while IFS= read -r pkg
 do
     echo "Converting pkg: $pkg"
 
+    apt-cache show $pkg | grep "Pre-Depends: " | grep "(\s*=\s*"
+
     echo "Checking if package has already bin converted ..."
     ls ${pkg}* &> /dev/null
     if [ $? -eq 0 ]; then
@@ -63,6 +65,14 @@ do
 done < "$pkg_list_fn"
 
 echo "Following packages need rework of dependencies: ${pkg_list_need_deps_rework}"
+for pkg in ${pkg_list_need_deps_rework}
+do
+    $SCRIPT_DIR/convert-pkg-deps-line.sh ${pkg}
+    if [ $? -ne 0 ]; then
+	echo "Failed to convert package: ${pkg}"
+	exit 1
+    fi
+done
 
 
 echo "---------------------------- Done -------------------------------------"
@@ -73,4 +83,6 @@ echo ""
 echo "Packages skipped because already converted before: ${pkg_list_skipped_present}"
 echo ""
 echo "Packages with version conflicts: ${pkg_list_version_conflict}"
+echo ""
+echo "Packages w/ converted Depends line: ${pkg_list_need_deps_rework}"
 echo ""

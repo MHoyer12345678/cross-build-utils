@@ -270,3 +270,7 @@ wdiff
 xxd
 xz-utils
 zlib1g
+libitm1
+liblsan0
+libtsan0
+libquadmath0
