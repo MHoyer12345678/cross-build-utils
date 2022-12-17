@@ -83,6 +83,16 @@ echo "Packing control file into control.*"
 tar caf ../control.* .
 cd ..
 
+echo "Unpacking content from package"
+mkdir rfs
+cd rfs
+tar xf ../data.*
+echo "Moving everything from /usr/share/doc to /usr/share/doc-deb to prevent content conflicts"
+mv ./usr/share/doc ./usr/share/doc-deb
+echo "Packing content into data.*"
+tar caf ../data.* .
+cd ..
+
 deb_fn="${pkg_name}_${rasp_pkg_version}_amd64.deb"
 echo "Packing debian package: ${deb_fn}"
 ar r "${call_dir}/${deb_fn}" debian-binary control.tar.* data.tar.* || exit 1
