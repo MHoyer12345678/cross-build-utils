@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# get-missing-dependencies.sh <pkg_name>
+# return code: 0: everything fine, 1: error 
+
+# - recusively:
+#    * Get package depedends line using apt-cache show pkgname (amd64 version)
+#    * iterate through "Depends: " line dependency by dependency
+#    * check each dependency
+#        * skip if already present as package in directory
+#        * skip if already part of dependencies-to-add list
+#        * else: add to dependencies-to-add list and check dependencies of this one as well
+#    * print out dependencies-to-add list
+
+if [ $# -eq 0 ]; then
+    echo "Name of package to convert missing"
+    exit 1
+fi
+
+open_dep_list=""
+
+function check_deps()
+{
+    pkg_name=$1
+    echo "Checking dependencies in package ${pkg_name}"
+
+    dep_line=$(apt-cache show ${pkg_name}:amd64 | grep "^Depends: " | sed "s/Depends: //")
+    echo "Depends line: ${dep_line}"
+}
+
+check_deps $1
+
+
+#rasp_pkg_fn=$(ls ${pkg_name}_*)
+#echo "Raspbian pkg fFilename: ${rasp_pkg_fn}" 
+
+#call_dir=$PWD
+#tmp_dir="./pkg_tmp"
+
