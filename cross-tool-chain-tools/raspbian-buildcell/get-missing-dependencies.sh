@@ -47,9 +47,6 @@ function check_deps()
 
     echo "Checking dependencies in package ${pkg_name}"
 
-    #todo:
-    #* proceeding for depends as well as pre-depends line
-
     pkg_info=$(apt-cache show ${pkg_name}:amd64)
     
     dep_line=$(echo "${pkg_info}" | grep -m 1 "^Depends: " | sed "s/Depends: //")
@@ -59,6 +56,7 @@ function check_deps()
     for dep_entry in ${dep_line}
     do
 	dep_pkg="${dep_entry%%(*}"
+	dep_pkg="${dep_pkg%%:*}"
 	dep_pkg="${dep_pkg// /}"
 
 	check_deps ${dep_pkg}
