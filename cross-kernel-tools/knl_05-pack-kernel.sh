@@ -105,7 +105,7 @@ cd ${KNL_LOCAL_SRC_PATH}
 make INSTALL_MOD_PATH=${KNL_PKG_BASE_DIR} modules_install || exit 1
 cd $dir
 
-tar -C ${KNL_PKG_BASE_DIR} -czf ${MODULES_TGZ} lib || exit 1
+tar -C ${KNL_PKG_BASE_DIR}/lib/modules -czf ${MODULES_TGZ} . || exit 1
 rm -r "${KNL_PKG_BASE_DIR}/lib"
 
 echo "DONE!"
